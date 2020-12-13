@@ -15,7 +15,7 @@
                         />
                     </div>
                     <h5 class="mb-2">{{ product.name }}</h5>
-                    <p class="text-grey">{{ product.price }}</p>
+                    <p class="text-grey">{{ product.price }} $$</p>
                     <p class="text-grey">{{ product.description }}</p>
                     <div class="flex justify-between flex-wrap">
                         <vs-button
@@ -23,10 +23,7 @@
                             type="gradient"
                             color="#7367F0"
                             gradient-color-secondary="#CE9FFC"
-                            >Download</vs-button
-                        >
-                        <vs-button class="mt-4" type="border" color="#b9b9b9"
-                            >View All</vs-button
+                            >Buy</vs-button
                         >
                     </div>
                 </vx-card>
@@ -40,21 +37,10 @@ export default {
     components: {},
     data() {
         return {
-            // card 1
             products: []
         };
     },
-    created() {
-        // Card 1
-        // this.$http
-        //     .get("/api/users/pixinvent/product/1")
-        //     .then(response => {
-        //         this.card_1 = response.data;
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     });
-    },
+    created() {},
     methods: {
         updateProducts() {
             fetch("/products")
@@ -77,7 +63,6 @@ export default {
             max-height: 485px;
         }
     }
-
     .chat-card-log {
         height: 360px;
 

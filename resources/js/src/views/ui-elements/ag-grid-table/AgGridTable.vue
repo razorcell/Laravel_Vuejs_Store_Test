@@ -172,7 +172,6 @@
                 :suppressPaginationPanel="true"
                 :enableRtl="$vs.rtl"
             >
-                <!--  -->
             </ag-grid-vue>
             <vs-pagination
                 :total="totalPages"
