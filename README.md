@@ -31,7 +31,9 @@ Replace composer path if necessary !
 
 5 - Generate Dummy database entries
 
-`php artisan -v migrate:fresh --seed` - Optionally, you could generate your own key using: 'php artisan key:generate'
+`php artisan -v migrate:fresh --seed`
+
+-   Optionally, you could generate your own key using: 'php artisan key:generate'
 
 6 - Run Laravel backend server
 
