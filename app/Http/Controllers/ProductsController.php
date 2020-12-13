@@ -52,7 +52,6 @@ class ProductsController extends Controller
         ], 201);
         // return Product::create($request->all);
     }
-
     /**
      * Display the specified resource.
      *
@@ -63,18 +62,16 @@ class ProductsController extends Controller
     {
         return Product::find($id);
     }
-
     /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(Request $request, $id)
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -84,9 +81,24 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $article = Product::findOrFail($id);
-        $article->update($request->all());
-        return $article;
+        if (Product::where('id', $id)->exists()) {
+            $product = Product::find($id);
+            $product->name = is_null($request->name) ? $product->name : $request->name;
+            $product->description = is_null($request->description) ? $product->description : $request->description;
+            $product->price = is_null($request->price) ? $product->price : $request->price;
+            $product->image = is_null($request->image) ? $product->image : $request->image;
+            $product->category_id = is_null($request->category_id) ? $product->category_id : $request->category_id;
+            $product->save();
+            return response()->json([
+                "message" => "Product updated successfully",
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "Product not found",
+            ], 404);
+
+        }
+
     }
 
     /**
