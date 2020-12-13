@@ -9,7 +9,7 @@ Installation:
 composer install
 ```
 
--   In case you have memory limit issues:
+    In case you have memory limit issues:
 
     ```
     Error : Fatal error: Allowed memory
