@@ -16,7 +16,8 @@ class ProductsController extends Controller
     {
         // $products = Product::latest()->paginate(3);
         // return view('products.index', compact('products'));
-        return response()->json(Product::get());
+        // return response()->json(Product::get());
+        return Product::all();
 
     }
 
@@ -38,7 +39,18 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request);
+        $product = new Product();
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->image = $request->image;
+        $product->category_id = $request->category_id;
+        $product->save();
+        return response()->json([
+            "message" => "Product record created",
+        ], 201);
+        // return Product::create($request->all);
     }
 
     /**
@@ -47,9 +59,9 @@ class ProductsController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        return Product::find($id);
     }
 
     /**
@@ -70,9 +82,11 @@ class ProductsController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $article = Product::findOrFail($id);
+        $article->update($request->all());
+        return $article;
     }
 
     /**
@@ -81,8 +95,9 @@ class ProductsController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        Product::find($id)->delete();
+        return 204;
     }
 }

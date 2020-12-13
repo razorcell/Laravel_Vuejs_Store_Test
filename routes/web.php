@@ -11,5 +11,6 @@
 |
  */
 Route::resource('products', 'ProductsController');
+Route::resource('categories', 'CategoriesController');
 
 Route::get('/{any}', 'ApplicationController')->where('any', '.*');

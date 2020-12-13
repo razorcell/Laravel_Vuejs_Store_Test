@@ -34,14 +34,14 @@ const router = new Router({
                     name: "home",
                     component: () => import("./views/Home.vue")
                 },
+                // {
+                //     path: "/page2",
+                //     name: "page-2",
+                //     component: () => import("./views/Page2.vue")
+                // },
                 {
-                    path: "/page2",
-                    name: "page-2",
-                    component: () => import("./views/Page2.vue")
-                },
-                {
-                    path: "/ui-elements/ag-grid-table",
-                    name: "ag-grid-table",
+                    path: "/products-list",
+                    name: "Products",
                     component: () =>
                         import(
                             "./views/ui-elements/ag-grid-table/AgGridTable.vue"
@@ -49,9 +49,9 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: "Home", url: "/" },
-                            { title: "agGrid Table", active: true }
+                            { title: "Products", active: true }
                         ],
-                        pageTitle: "agGrid Table",
+                        pageTitle: "Products",
                         rule: "editor"
                     }
                 }

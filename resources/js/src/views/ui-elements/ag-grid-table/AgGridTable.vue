@@ -9,6 +9,74 @@
 
 <template>
     <div id="ag-grid-demo">
+        <vx-card title="Add" code-toggler>
+            <div class="vx-row mb-6">
+                <div class="vx-col sm:w-1/3 w-full">
+                    <span>Name</span>
+                </div>
+                <div class="vx-col sm:w-2/3 w-full">
+                    <vs-input class="w-full" v-model="name" />
+                </div>
+            </div>
+            <div class="vx-row mb-6">
+                <div class="vx-col sm:w-1/3 w-full">
+                    <span>Description</span>
+                </div>
+                <div class="vx-col sm:w-2/3 w-full">
+                    <vs-input
+                        class="w-full"
+                        type="email"
+                        v-model="description"
+                    />
+                </div>
+            </div>
+            <div class="vx-row mb-6">
+                <div class="vx-col sm:w-1/3 w-full">
+                    <span>Price</span>
+                </div>
+                <div class="vx-col sm:w-2/3 w-full">
+                    <vs-input class="w-full" v-model="price" />
+                </div>
+            </div>
+            <div class="vx-row mb-6">
+                <div class="vx-col sm:w-1/3 w-full">
+                    <span>Image URL</span>
+                </div>
+                <div class="vx-col sm:w-2/3 w-full">
+                    <vs-input class="w-full" v-model="imageUrl" />
+                </div>
+            </div>
+            <div class="vx-row mb-6">
+                <div class="vx-col sm:w-1/3 w-full">
+                    <span>Category</span>
+                </div>
+                <div class="vx-col sm:w-2/3 w-full">
+                    <v-select
+                        :options="categories"
+                        :dir="$vs.rtl ? 'rtl' : 'ltr'"
+                        v-model="category_id"
+                    />
+                </div>
+            </div>
+
+            <div class="vx-row">
+                <div class="vx-col sm:w-2/3 w-full ml-auto">
+                    <vs-button class="mr-3 mb-2" @click="addProduct"
+                        >Submit</vs-button
+                    >
+                    <vs-button
+                        color="warning"
+                        type="border"
+                        class="mb-2"
+                        @click="
+                            name = description = price = imageUrl = category =
+                                ''
+                        "
+                        >Reset</vs-button
+                    >
+                </div>
+            </div>
+        </vx-card>
         <vx-card>
             <!-- TABLE ACTION ROW -->
             <div class="flex flex-wrap justify-between items-center">
@@ -19,19 +87,19 @@
                             class="p-4 border border-solid d-theme-border-grey-light rounded-full d-theme-dark-bg cursor-pointer flex items-center justify-between font-medium"
                         >
                             <span class="mr-2">
-                                <!-- {{
+                                {{
                                     currentPage * paginationPageSize -
                                         (paginationPageSize - 1)
                                 }}
                                 -
                                 {{
-                                    contacts.length -
+                                    this.rowData.length -
                                         currentPage * paginationPageSize >
                                     0
                                         ? currentPage * paginationPageSize
-                                        : contacts.length
+                                        : this.rowData.length
                                 }}
-                                of {{ contacts.length }} -->
+                                of {{ this.rowData.length }}
                             </span>
                             <feather-icon
                                 icon="ChevronDownIcon"
@@ -41,24 +109,24 @@
                         <!-- <vs-button class="btn-drop" type="line" color="primary" icon-pack="feather" icon="icon-chevron-down"></vs-button> -->
                         <vs-dropdown-menu>
                             <vs-dropdown-item
+                                @click="gridApi.paginationSetPageSize(5)"
+                            >
+                                <span>5</span>
+                            </vs-dropdown-item>
+                            <vs-dropdown-item
+                                @click="gridApi.paginationSetPageSize(10)"
+                            >
+                                <span>10</span>
+                            </vs-dropdown-item>
+                            <vs-dropdown-item
                                 @click="gridApi.paginationSetPageSize(20)"
                             >
                                 <span>20</span>
                             </vs-dropdown-item>
                             <vs-dropdown-item
-                                @click="gridApi.paginationSetPageSize(50)"
-                            >
-                                <span>50</span>
-                            </vs-dropdown-item>
-                            <vs-dropdown-item
                                 @click="gridApi.paginationSetPageSize(100)"
                             >
                                 <span>100</span>
-                            </vs-dropdown-item>
-                            <vs-dropdown-item
-                                @click="gridApi.paginationSetPageSize(150)"
-                            >
-                                <span>150</span>
                             </vs-dropdown-item>
                         </vs-dropdown-menu>
                     </vs-dropdown>
@@ -79,6 +147,13 @@
                         @click="gridApi.exportDataAsCsv()"
                         >Export as CSV</vs-button
                     >
+                    <vs-button
+                        color="danger"
+                        type="filled"
+                        class="mb-4 md:mb-0 ml-4"
+                        @click="deleteProduct"
+                        >Delete</vs-button
+                    >
                 </div>
             </div>
             <ag-grid-vue
@@ -87,7 +162,8 @@
                 class="ag-theme-material w-100 my-4 ag-grid-table"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
-                rowSelection="multiple"
+                rowSelection="single"
+                :rowData="rowData"
                 colResizeDefault="shift"
                 :animateRows="true"
                 :floatingFilter="true"
@@ -96,6 +172,7 @@
                 :suppressPaginationPanel="true"
                 :enableRtl="$vs.rtl"
             >
+                <!--  -->
             </ag-grid-vue>
             <vs-pagination
                 :total="totalPages"
@@ -107,40 +184,33 @@
 </template>
 
 <script>
+import DropdownOptionsBasic from "../../components/select/dropdown-options/DropdownOptionsBasic.vue";
+import vSelect from "vue-select";
+import InputDefault from "./InputDefault.vue";
 import { AgGridVue } from "ag-grid-vue";
-import contacts from "./data.json";
 
 import "@sass/vuexy/extraComponents/agGridStyleOverride.scss";
 
-const datasource = {
-    getRows(params) {
-        console.log(JSON.stringify(params.request, null, 1));
-
-        fetch("./products", {
-            method: "get"
-            // body: JSON.stringify(params.request),
-            // headers: { "Content-Type": "application/json; charset=utf-8" }
-        })
-            .then(httpResponse => httpResponse.json())
-            .then(response => {
-                params.successCallback(response.rows, response.lastRow);
-            })
-            .catch(error => {
-                console.error(error);
-                params.failCallback();
-            });
-    }
-};
-
 export default {
     components: {
+        DropdownOptionsBasic,
+        "v-select": vSelect,
+        InputDefault,
         AgGridVue
     },
     data() {
         return {
+            pagination: true,
+            categories: [],
+            name: "",
+            description: "",
+            price: "",
+            imageUrl: "",
+            category_id: null,
             rowModelType: "serverSide",
+            rowData: [],
             searchQuery: "",
-            // gridOptions: {},
+            gridOptions: {},
             maxPageNumbers: 7,
             gridApi: null,
             defaultColDef: {
@@ -150,70 +220,40 @@ export default {
                 suppressMenu: true
             },
             columnDefs: [
-                // {
-                //   headerName: 'First Name',
-                //   field: 'firstname',
-                //   width: 175,
-                //   filter: true,
-                //   checkboxSelection: true,
-                //   headerCheckboxSelectionFilteredOnly: true,
-                //   headerCheckboxSelection: true
-                // },
                 {
                     headerName: "ID",
                     field: "id",
                     filter: true,
-                    width: 175
-                },
-                {
-                    headerName: "Email",
-                    field: "email",
-                    filter: true,
-                    width: 175
+                    checkboxSelection: true,
+                    headerCheckboxSelectionFilteredOnly: true,
+                    headerCheckboxSelection: true
+                    // width: 175
                 },
                 {
                     headerName: "Name",
                     field: "name",
-                    filter: true,
-                    width: 250,
-                    pinned: "left"
+                    filter: true
+                    // width: 175
                 },
                 {
-                    headerName: "category_id",
+                    headerName: "Description",
+                    field: "description",
+                    filter: true
+                    // width: 250
+                    // pinned: "left"
+                },
+                {
+                    headerName: "Price",
                     field: "price",
-                    filter: true,
-                    width: 250
+                    filter: true
+                    // width: 250
                 },
                 {
-                    headerName: "category_id",
+                    headerName: "Category_id",
                     field: "category_id",
-                    filter: true,
-                    width: 150
+                    filter: true
+                    // width: 150
                 }
-                // {
-                //     headerName: "Country",
-                //     field: "country",
-                //     filter: true,
-                //     width: 150
-                // },
-                // {
-                //     headerName: "State",
-                //     field: "state",
-                //     filter: true,
-                //     width: 125
-                // },
-                // {
-                //     headerName: "Zip",
-                //     field: "zip",
-                //     filter: true,
-                //     width: 125
-                // },
-                // {
-                //     headerName: "Followers",
-                //     field: "followers",
-                //     filter: "agNumberColumnFilter",
-                //     width: 125
-                // }
             ]
             // contacts
         };
@@ -229,7 +269,7 @@ export default {
     computed: {
         paginationPageSize() {
             if (this.gridApi) return this.gridApi.paginationGetPageSize();
-            else return 50;
+            else return 8;
         },
         totalPages() {
             if (this.gridApi) return this.gridApi.paginationGetTotalPages();
@@ -249,13 +289,66 @@ export default {
     methods: {
         updateSearchQuery(val) {
             this.gridApi.setQuickFilter(val);
+        },
+        addProduct() {
+            var formdata = new FormData();
+            formdata.append("name", this.name);
+            formdata.append("description", this.description);
+            formdata.append("price", this.price);
+            formdata.append("image", this.imageUrl);
+            formdata.append("category_id", this.category_id.value);
+            fetch("/api/products", {
+                method: "POST",
+                body: formdata
+            })
+                .then(result => result.text())
+                .then(result => {
+                    console.log(result);
+                    this.updateProducts();
+                    this.$vs.notify({
+                        title: "Product",
+                        text: "Add success",
+                        color: "success"
+                    });
+                });
+        },
+        updateProducts() {
+            fetch("/products")
+                .then(result => result.json())
+                .then(rowData => {
+                    this.gridApi.setRowData(rowData);
+                });
+        },
+        updateCategories() {
+            fetch("/categories")
+                .then(result => result.json())
+                .then(
+                    rowData =>
+                        (this.categories = rowData.map(cat => {
+                            return { label: cat.name, value: cat.id };
+                        }))
+                );
+        },
+        deleteProduct() {
+            const to_be_deleted = this.gridApi.getSelectedRows().shift();
+            fetch(`/api/products/${to_be_deleted.id}`, {
+                method: "DELETE"
+            })
+                .then(result => result.text())
+                .then(result => {
+                    console.log(result);
+                    this.updateProducts();
+                    this.$vs.notify({
+                        title: "Product",
+                        text: "Delete success",
+                        color: "success"
+                    });
+                });
         }
     },
     mounted() {
-        // this.gridApi = this.gridOptions.api;
-        this.gridApi = this.gridOptions.api.setServerSideDatasource(datasource);
-        // this.gridOptions.api;
-
+        this.gridApi = this.gridOptions.api; //Easy access to Grip API
+        this.updateProducts();
         /* =================================================================
       NOTE:
       Header is not aligned properly in RTL version of agGrid table.
@@ -269,8 +362,9 @@ export default {
                 Number(header.style.transform.slice(11, -3)) + 9
             )}px`;
         }
+    },
+    beforeMount() {
+        this.updateCategories(); //Add cetegories in the select box
     }
 };
-
-// register datasource with the grid
 </script>
