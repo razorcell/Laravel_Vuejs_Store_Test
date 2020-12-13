@@ -1,5 +1,8 @@
 # A Test project for the Laravel/Vuejs Stack through a simple store.
 
+<a href="https://ibb.co/dWgq82s"><img src="https://i.ibb.co/1v65FqY/Screenshot-1.png" alt="Screenshot-1" border="0"></a>
+<a href="https://ibb.co/7NG07Mt"><img src="https://i.ibb.co/vvJM2y4/Screenshot-2.png" alt="Screenshot-2" border="0"></a>
+
 Installation:
 
 1 - Clone repository
