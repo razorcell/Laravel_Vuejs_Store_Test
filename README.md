@@ -35,6 +35,10 @@ Replace composer path if necessary !
 
 -   Optionally, you could generate your own key using: 'php artisan key:generate'
 
+-   Unit test can be ran using:
+
+`composer test`
+
 6 - Run Laravel backend server
 
 `php artisan serve` - Optionally, you could change the listening port using 'php artisan serve --port=8080 // For port 8080'
