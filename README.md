@@ -1,4 +1,4 @@
-A Test project for the Laravel/Vuejs Stack through a simple store.
+# A Test project for the Laravel/Vuejs Stack through a simple store.
 
 Installation:
 
