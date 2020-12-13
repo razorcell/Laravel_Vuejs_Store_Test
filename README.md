@@ -35,7 +35,7 @@ Replace composer path if necessary !
 
 -   Optionally, you could generate your own key using: 'php artisan key:generate'
 
--   Unit tests can be ran using, () They include Database seeding + Products creation and update tests:
+-   Unit tests can be ran using, (They include Database seeding + Products creation and update tests):
 
 `composer test`
 
