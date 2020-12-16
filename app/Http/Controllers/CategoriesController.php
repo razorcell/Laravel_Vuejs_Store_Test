@@ -133,7 +133,6 @@ class CategoriesController extends Controller
     public function destroy($id)
     {
         $result = ['status' => 200];
-
         try {
             $result['data'] = $this->categoryService->deleteById($id);
         } catch (Exception $e) {

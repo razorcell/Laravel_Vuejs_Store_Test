@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\Services\ProductService;
+use Exception;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+    /**
+     * @var productService
+     */
+    protected $productService;
+
+    /**
+     * ProductController Constructor
+     *
+     * @param ProductService $productService
+     *
+     */
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,11 +31,16 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        // $products = Product::latest()->paginate(3);
-        // return view('products.index', compact('products'));
-        // return response()->json(Product::get());
-        return Product::all();
-
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->productService->getAll();
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -39,77 +61,91 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
-        $product = new Product();
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->image = $request->image;
-        $product->category_id = $request->category_id;
-        $product->save();
-        return response()->json([
-            "message" => "Product record created",
-        ], 201);
-        // return Product::create($request->all);
+        $data = [];
+        $data['name'] = $request->name;
+        $data['description'] = $request->description;
+        $data['price'] = $request->price;
+        $data['image'] = $request->image;
+        $data['category_id'] = $request->category_id;
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->productService->saveProductData($data);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return Product::find($id);
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->productService->getById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
+
     /**
-     * Show the form for editing the specified resource.
+     * Update product.
      *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $id)
-    {
-        //
-    }
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
+     * @param Request $request
+     * @param id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        if (Product::where('id', $id)->exists()) {
-            $product = Product::find($id);
-            $product->name = is_null($request->name) ? $product->name : $request->name;
-            $product->description = is_null($request->description) ? $product->description : $request->description;
-            $product->price = is_null($request->price) ? $product->price : $request->price;
-            $product->image = is_null($request->image) ? $product->image : $request->image;
-            $product->category_id = is_null($request->category_id) ? $product->category_id : $request->category_id;
-            $product->save();
-            return response()->json([
-                "message" => "Product updated successfully",
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => "Product not found",
-            ], 404);
+        $data = [];
+        $data['name'] = $request->name;
+        $data['description'] = $request->description;
+        $data['price'] = $request->price;
+        $data['image'] = $request->image;
+        $data['category_id'] = $request->category_id;
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->productService->updateProduct($data, $id);
 
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
         }
+
+        return response()->json($result, $result['status']);
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
+     * @param $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        Product::find($id)->delete();
-        return 204;
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->productService->deleteById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 }
