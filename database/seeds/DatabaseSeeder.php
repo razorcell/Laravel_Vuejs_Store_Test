@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        factory(Category::class, 3)->create()->each(function ($c) {
+        factory(Category::class, 10)->create()->each(function ($c) {
             $c->products()->saveMany(factory(Product::class, rand(1, 5))->make());
         });
     }

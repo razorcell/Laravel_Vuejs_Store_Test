@@ -21,7 +21,7 @@ class ProductsTest extends TestCase
             'image' => 'Test image',
             'category_id' => 0,
         ];
-        $this->post('/api/products', $payload)->assertStatus(201);
+        $this->post('/api/products', $payload)->assertStatus(200);
     }
     public function testsProductsAreUpdatedCorrectly()
     {
