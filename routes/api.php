@@ -15,12 +15,14 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('categories', 'CategoriesController@index');
+Route::get('categories/{id}', 'CategoriesController@show');
+Route::post('categories', 'CategoriesController@store');
+Route::put('categories/{id}', 'CategoriesController@update');
+Route::delete('categories/{id}', 'CategoriesController@destroy');
+
 Route::get('products', 'ProductsController@index');
-
 Route::get('products/{id}', 'ProductsController@show');
-
 Route::post('products', 'ProductsController@store');
-
 Route::put('products/{id}', 'ProductsController@update');
-
 Route::delete('products/{id}', 'ProductsController@destroy');

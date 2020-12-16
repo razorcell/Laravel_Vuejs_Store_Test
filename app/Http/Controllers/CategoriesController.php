@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
+use App\Services\CategoryService;
+use Exception;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+    /**
+     * @var categoryService
+     */
+    protected $categoryService;
+
+    /**
+     * CategoryController Constructor
+     *
+     * @param CategoryService $categoryService
+     *
+     */
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +31,17 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        return response()->json(Category::get());
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->categoryService->getAll();
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -35,51 +62,86 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = [];
+        $data['name'] = $request->name;
+        $data['parent_id'] = isset($request->parent_id) ? $request->parent_id : null;
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->categoryService->saveCategoryData($data);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Category  $category
+     * @param  id
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($id)
     {
-        //
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->categoryService->getById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update category.
      *
-     * @param  \App\Category  $category
+     * @param Request $request
+     * @param id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $data = [];
+        $data['name'] = $request->name;
+        $data['parent_id'] = isset($request->parent_id) ? $request->parent_id : null;
+        $result = ['status' => 200];
+        try {
+            $result['data'] = $this->categoryService->updateCategory($data, $id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        return response()->json($result, $result['status']);
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Category  $category
+     * @param $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        //
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->categoryService->deleteById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 }
