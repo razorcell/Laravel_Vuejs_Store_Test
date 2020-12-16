@@ -89,7 +89,6 @@ class ProductService
         DB::beginTransaction();
         try {
             $product = $this->productRepository->update($data, $id);
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -97,9 +96,7 @@ class ProductService
         }
         DB::commit();
         return $product;
-
     }
-
     /**
      * Validate product data.
      * Store to DB if there are no errors.

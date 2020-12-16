@@ -10,7 +10,6 @@ class CategoryRepository
      * @var Category
      */
     protected $category;
-
     /**
      * CategoryRepository constructor.
      *
@@ -53,7 +52,7 @@ class CategoryRepository
      */
     public function save($data)
     {
-        $category = new $this->category;
+        $category = $this->category;
         $category->name = $data['name'];
         $category->parent_id = $data['parent_id'];
         $category->save();
@@ -68,7 +67,6 @@ class CategoryRepository
      */
     public function update($data, $id)
     {
-
         $category = $this->category->find($id);
         $category->name = $data['name'];
         $category->parent_id = $data['parent_id'];
@@ -84,10 +82,8 @@ class CategoryRepository
      */
     public function delete($id)
     {
-
         $category = $this->category->find($id);
         $category->delete();
         return $category;
     }
-
 }

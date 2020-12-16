@@ -112,16 +112,13 @@ class CategoriesController extends Controller
         $result = ['status' => 200];
         try {
             $result['data'] = $this->categoryService->updateCategory($data, $id);
-
         } catch (Exception $e) {
             $result = [
                 'status' => 500,
                 'error' => $e->getMessage(),
             ];
         }
-
         return response()->json($result, $result['status']);
-
     }
 
     /**

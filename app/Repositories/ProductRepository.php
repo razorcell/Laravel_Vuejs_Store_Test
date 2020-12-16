@@ -10,7 +10,6 @@ class ProductRepository
      * @var Product
      */
     protected $product;
-
     /**
      * ProductRepository constructor.
      *
@@ -53,7 +52,7 @@ class ProductRepository
      */
     public function save($data)
     {
-        $product = new $this->product;
+        $product = $this->product;
         $product->name = $data['name'];
         $product->description = $data['description'];
         $product->price = $data['price'];
@@ -71,7 +70,6 @@ class ProductRepository
      */
     public function update($data, $id)
     {
-
         $product = $this->product->find($id);
         $product->name = $data['name'];
         $product->description = $data['description'];
@@ -90,10 +88,8 @@ class ProductRepository
      */
     public function delete($id)
     {
-
         $product = $this->product->find($id);
         $product->delete();
         return $product;
     }
-
 }

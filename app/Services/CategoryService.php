@@ -86,7 +86,6 @@ class CategoryService
         DB::beginTransaction();
         try {
             $category = $this->categoryRepository->update($data, $id);
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -94,7 +93,6 @@ class CategoryService
         }
         DB::commit();
         return $category;
-
     }
 
     /**
