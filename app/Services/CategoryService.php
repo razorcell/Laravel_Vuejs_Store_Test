@@ -2,12 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Repositories\CategoryRepository;
-use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 
 class CategoryService
 {
@@ -25,27 +23,6 @@ class CategoryService
     {
         $this->categoryRepository = $categoryRepository;
     }
-
-    /**
-     * Delete category by id.
-     *
-     * @param $id
-     * @return String
-     */
-    public function deleteById($id)
-    {
-        DB::beginTransaction();
-        try {
-            $category = $this->categoryRepository->delete($id);
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Unable to delete category data');
-        }
-        DB::commit();
-        return $category;
-    }
-
     /**
      * Get all category.
      *
@@ -53,6 +30,7 @@ class CategoryService
      */
     public function getAll()
     {
+        // return $this->categoryRepository->getAll();
         return $this->categoryRepository->getAll();
     }
 
@@ -68,50 +46,76 @@ class CategoryService
     }
 
     /**
-     * Update category data
-     * Store to DB if there are no errors.
-     *
-     * @param array $data
-     * @return String
-     */
-    public function updateCategory($data, $id)
-    {
-        $validator = Validator::make($data, [
-            'name' => 'required|min:2',
-            'parent_id' => 'nullable',
-        ]);
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-        DB::beginTransaction();
-        try {
-            $category = $this->categoryRepository->update($data, $id);
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::info($e->getMessage());
-            throw new InvalidArgumentException('Unable to update category data');
-        }
-        DB::commit();
-        return $category;
-    }
-
-    /**
      * Validate category data.
      * Store to DB if there are no errors.
      *
      * @param array $data
      * @return String
      */
-    public function saveCategoryData($data)
+    // public function saveCategoryData($data)
+    public function saveCategoryData(Request $request)
     {
-        $validator = Validator::make($data, [
-            'name' => 'required|min:2',
-            'parent_id' => 'nullable',
-        ]);
-        if ($validator->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
-        }
-        $result = $this->categoryRepository->save($data);
-        return $result;
+        // $validator = Validator::make($data, [
+        //     'name' => 'required|min:2',
+        //     'parent_id' => 'nullable',
+        // ]);
+        // if ($validator->fails()) {
+        //     throw new InvalidArgumentException($validator->errors()->first());
+        // }
+        // $result = $this->categoryRepository->save($data);
+        // return $result;
+        $attributes = $request->all();
+        return $this->categoryRepository->save($attributes);
+    }
+
+    /**
+     * Update category data
+     * Store to DB if there are no errors.
+     *
+     * @param array $data
+     * @return String
+     */
+    // public function updateCategory($data, $id)
+    public function updateCategory(Request $request, $id)
+    {
+        // $validator = Validator::make($data, [
+        //     'name' => 'required|min:2',
+        //     'parent_id' => 'nullable',
+        // ]);
+        // if ($validator->fails()) {
+        //     throw new InvalidArgumentException($validator->errors()->first());
+        // }
+        // DB::beginTransaction();
+        // try {
+        //     $category = $this->categoryRepository->update($data, $id);
+        // } catch (Exception $e) {
+        //     DB::rollBack();
+        //     Log::info($e->getMessage());
+        //     throw new InvalidArgumentException('Unable to update category data');
+        // }
+        // DB::commit();
+        // return $category;
+        $attributes = $request->all();
+        return $this->categoryRepository->update($attributes, $id);
+    }
+    /**
+     * Delete category by id.
+     *
+     * @param $id
+     * @return String
+     */
+    public function deleteById($id)
+    {
+        // DB::beginTransaction();
+        // try {
+        //     $category = $this->categoryRepository->delete($id);
+        // } catch (Exception $e) {
+        //     DB::rollBack();
+        //     Log::info($e->getMessage());
+        //     throw new InvalidArgumentException('Unable to delete category data');
+        // }
+        // DB::commit();
+        // return $category;
+        return $this->categoryRepository->delete($id);
     }
 }

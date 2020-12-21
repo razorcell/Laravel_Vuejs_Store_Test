@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Category;
+use App\Models\Category;
 
 class CategoryRepository
 {
@@ -27,8 +27,8 @@ class CategoryRepository
      */
     public function getAll()
     {
-        return $this->category
-            ->get();
+        // return $this->category->get();
+        return $this->category->all();
     }
 
     /**
@@ -39,9 +39,8 @@ class CategoryRepository
      */
     public function getById($id)
     {
-        return $this->category
-            ->where('id', $id)
-            ->get();
+        // return $this->category->where('id', $id)->get();
+        return $this->category->find($id);
     }
 
     /**
@@ -50,13 +49,14 @@ class CategoryRepository
      * @param $data
      * @return Category
      */
-    public function save($data)
+    public function save(array $attributes)
     {
-        $category = $this->category;
-        $category->name = $data['name'];
-        $category->parent_id = $data['parent_id'];
-        $category->save();
-        return $category->fresh();
+        // $category = $this->category;
+        // $category->name = $data['name'];
+        // $category->parent_id = $data['parent_id'];
+        // $category->save();
+        // return $category->fresh();
+        return $this->category->create($attributes);
     }
 
     /**
@@ -65,13 +65,14 @@ class CategoryRepository
      * @param $data
      * @return Category
      */
-    public function update($data, $id)
+    public function update(array $attributes, $id)
     {
-        $category = $this->category->find($id);
-        $category->name = $data['name'];
-        $category->parent_id = $data['parent_id'];
-        $category->update();
-        return $category;
+        // $category = $this->category->find($id);
+        // $category->name = $data['name'];
+        // $category->parent_id = $data['parent_id'];
+        // $category->update();
+        // return $category;
+        return $this->category->find($id)->update($attributes);
     }
 
     /**
@@ -82,8 +83,9 @@ class CategoryRepository
      */
     public function delete($id)
     {
-        $category = $this->category->find($id);
-        $category->delete();
-        return $category;
+        // $category = $this->category->find($id);
+        // $category->delete();
+        // return $category;
+        return $this->category->find($id)->delete();
     }
 }
